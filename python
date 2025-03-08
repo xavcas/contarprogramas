@@ -1,0 +1,56 @@
+import os
+import subprocess
+
+def contar_programas_desarrollo():
+    # Lista de palabras clave relacionadas con el desarrollo de software
+    palabras_clave = [
+        "python", "java", "c++", "c#", "visual studio", "eclipse", "intellij", "pycharm",
+        "vscode", "sublime", "atom", "git", "docker", "node", "npm", "ruby", "php", "sql",
+        "postgresql", "mysql", "mongodb", "apache", "nginx", "bash", "powershell", "anaconda",
+        "jupyter", "spyder", "flask", "django", "react", "angular", "vue", "typescript", "html",
+        "css", "javascript", "linux", "windows", "macos", "terminal", "cmd", "powershell"
+    ]
+
+    # Contador de programas de desarrollo
+    contador = 0
+
+    # Obtener la lista de programas instalados
+    if os.name == 'nt':  # Windows
+        try:
+            # Usar el comando 'wmic' para obtener programas instalados
+            resultado = subprocess.check_output(
+                'wmic product get name', shell=True, text=True
+            )
+            programas = resultado.split('\n')[1:]  # Ignorar la primera línea (encabezado)
+        except Exception as e:
+            print(f"Error al obtener programas instalados: {e}")
+            return
+    elif os.name == 'posix':  # Linux o macOS
+        try:
+            # Usar 'dpkg' en Linux o 'ls' en macOS para obtener programas instalados
+            if os.uname().sysname == 'Linux':
+                resultado = subprocess.check_output(
+                    'dpkg --get-selections', shell=True, text=True
+                )
+            else:  # macOS
+                resultado = subprocess.check_output(
+                    'ls /Applications', shell=True, text=True
+                )
+            programas = resultado.split('\n')
+        except Exception as e:
+            print(f"Error al obtener programas instalados: {e}")
+            return
+    else:
+        print("Sistema operativo no compatible.")
+        return
+
+    # Contar programas relacionados con el desarrollo
+    for programa in programas:
+        if any(palabra.lower() in programa.lower() for palabra in palabras_clave):
+            contador += 1
+            print(f"Programa de desarrollo encontrado: {programa.strip()}")
+
+    print(f"\nTotal de programas de desarrollo instalados: {contador}")
+
+# Ejecutar la función
+contar_programas_desarrollo()
